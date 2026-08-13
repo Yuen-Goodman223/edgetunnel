@@ -302,7 +302,15 @@ adminPageHtml = adminPageHtml.replace(
 	/(<button[^>]*id=["']onlineOptimizeBtn["'][^>]*?)\sdisabled(?=[\s>])/i,
 	'$1'
 );
-
+adminPageHtml = adminPageHtml
+    .replace(
+        'fetchJsonFromFastestEndpoint(allEndpoints, "ip.json", 6500);',
+        'fetchJsonFromFastestEndpoint(allEndpoints, "ip.json", 20000);'
+    )
+    .replace(
+        'fetchJsonFromFastestEndpoint(buildDetectEndpoints(family, host), "ip.json", 6500);',
+        'fetchJsonFromFastestEndpoint(buildDetectEndpoints(family, host), "ip.json", 20000);'
+    );
 const adminPageHeaders = new Headers(adminPageResponse.headers);
 adminPageHeaders.set('Content-Type', 'text/html; charset=utf-8');
 adminPageHeaders.set('Cache-Control', 'no-store, no-cache, must-revalidate');
