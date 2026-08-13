@@ -295,7 +295,25 @@ export default {
 					}
 
 					ctx.waitUntil(请求日志记录(env, request, 访问IP, 'Admin_Login', config_JSON));
-					return fetch(Pages静态页面 + '/admin' + url.search);
+					const adminPageResponse = await fetch(Pages静态页面 + '/admin' + url.search);
+let adminPageHtml = await adminPageResponse.text();
+
+adminPageHtml = adminPageHtml.replace(
+	/(<button[^>]*id=["']onlineOptimizeBtn["'][^>]*?)\sdisabled(?=[\s>])/i,
+	'$1'
+);
+
+const adminPageHeaders = new Headers(adminPageResponse.headers);
+adminPageHeaders.set('Content-Type', 'text/html; charset=utf-8');
+adminPageHeaders.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+adminPageHeaders.delete('Content-Length');
+adminPageHeaders.delete('Content-Encoding');
+
+return new Response(adminPageHtml, {
+	status: adminPageResponse.status,
+	statusText: adminPageResponse.statusText,
+	headers: adminPageHeaders
+});
 				} else if (访问路径 === 'logout' || uuidRegex.test(访问路径)) {//清除cookie并跳转到登录页面
 					const 响应 = new Response('重定向中...', { status: 302, headers: { 'Location': '/login' } });
 					响应.headers.set('Set-Cookie', 'auth=; Path=/; Max-Age=0; HttpOnly');
